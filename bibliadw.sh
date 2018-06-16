@@ -1,9 +1,10 @@
 #!/bin/bash
-#+-----------------------------------+
-#|Program: Bíblia DW                 |
-#|Version: 1.0.1                     |
-#|Autor: Francisco Iago Lira Passos  |
-#+-----------------------------------+
+#+-------------------------------------------------------+
+#|Program: Bíblia DW                                     |
+#|Version: 1.0.1                                         |
+#|Autor: Francisco Iago Lira Passos                      |
+#|GitHub: https://github.com/iagolirapasssos/biblia-bash |
+#+-------------------------------------------------------+
 
 export site="https://www.bibliaonline.com.br"
 export dirat="antigo-testamento"
@@ -477,6 +478,7 @@ read -p "Digite o índice correspondente a versão bíblica: " vsb
             versaob
             read -p "Escolha o livro pelo índice (ex.: 23): " a
             vt "$a" "$bl" "$vsb"
+            menu
         ;;
         2)
             versaob
@@ -485,16 +487,17 @@ read -p "Digite o índice correspondente a versão bíblica: " vsb
             do
                 vt "$j" "$bl" "$vsb"
             done
+            menu
         ;;
         *) 
             echo "Opção inválida! Digite '0' ou '1'."
         ;;
         esac
       elif [ "$bl" == "l" ] || [ "$bl" == "L" ]; then
-      versaob
-      read -p "Escolha o livro pelo índice (ex.: 23): " a
+        versaob
+        read -p "Escolha o livro pelo índice (ex.: 23): " a
         vt "$a" "$bl" "$vsb"
-        #menuler $a $bl
+        menu
       else
         atm
       fi
@@ -560,7 +563,7 @@ function clearline() {
 #barra progresso
 function progresso() {
 clear
-    ini=14
+    ini=2
     imax=51
     
     per=$(echo "scale=0; ($1*50)/$2" | bc)
@@ -582,23 +585,13 @@ clear
 
 #construir diretorio
 function builddir() {
-    if [ -d "$5" ]; then
+        [[ -d "$5" ]] || mkdir "$5"
         [[ -d "$5"/at ]] || mkdir "$5"/at
-        buildbook "$1" "$2" "$3" "$5" "$4"
-    else
-        mkdir "$5"
-        mkdir "$5"/at
-        buildbook "$1" "$2" "$3" "$5" "$4"
-    fi
 
-    if [ -d "$5" ]; then
+        [[ -d "$5" ]] || mkdir "$5"
         [[ -d "$5"/nt ]] || mkdir "$5"/nt
+        
         buildbook "$1" "$2" "$3" "$5" "$4"
-    else
-        mkdir "$5"
-        mkdir "$5"/nt
-        buildbook "$1" "$2" "$3" "$5" "$4"
-    fi
 }
 #construir diretorio
 
@@ -633,6 +626,7 @@ function key() {
 #Detectar a tecla up ou dw
 
 #construir livro
+
 function buildbook() {
     for (( k=1; k<="$1"; k++ ))
     do
