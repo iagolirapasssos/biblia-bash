@@ -9,7 +9,7 @@
 export site="https://www.bibliaonline.com.br"
 export dirat="antigo-testamento"
 export dirnt="novo-testamento"
-export spc="      "
+
 
 function jmp() {
     tput cup $1 $2
@@ -664,7 +664,7 @@ do	clear
          +------------------------------+
          Linha "$i" de "$linebook""
     
-	grep -oP '(?<=\.).*(?=\"*)' "$book" | head -"$i" | tail -n "$lpv"
+	grep -oP '(?<=[a-zA-Z] ).*(?=$)' "$book" | head -"$i" | tail -n "$lpv"
 	
 	key #chama a funcao key
 	
