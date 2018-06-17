@@ -8,3 +8,5 @@ Passo 1) chmod +x bibliadw.sh
 Passo 2) ./bibliadw.sh
 
 Passo 3) Seguir os procedimentos do script.
+
+Você pode baixar todos os livros, em todas as versões disponíveis, usando o script.
