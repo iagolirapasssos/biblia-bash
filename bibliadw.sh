@@ -15,6 +15,34 @@ function jmp() {
     tput cup $1 $2
 }
 
+function versaob() {
+    echo "
+      +----------------------------------------+
+      |     Escolha uma das versões            |
+      |                                        |
+      |  [1] Almeida Corrigida Fiel (ACF)      |
+      |  [2] Nova Versão Internacional (NVI)   |
+      |  [3] Sociedade Bíblica Critânica (SBC) |
+      |  [4] Versão Católica (VC)              |
+      +----------------------------------------+"
+      read -p "      Digite o índice correspondente a versão bíblica: " vsb
+      unset abv
+      case $vsb in
+	    1)
+	      abv="acf"
+        ;;
+        2)
+	      abv="nvi"
+        ;;
+        3)
+	      abv="sbc"
+        ;;
+        4)
+	      abv="vc"
+        ;;
+        esac
+}
+
 function menu() {
     clear
 	echo "
@@ -24,15 +52,22 @@ function menu() {
 	|                                |
 	| [1] Velho testamento (VT)      |
 	| [2] Novo testamento (NT)       |
+	| [3] Buscar palavra(s)          |      
 	| [0] Sair (Ctrl+C)              |
 	|                                |
 	+--------------------------------+"
-	read -p "Escolha o VT(1) ou NT(2): " lv
+	read -p "	Escolha o VT(1) ou NT(2): " lv
 	
 	case "$lv" in
 	 1) atm
 	 ;;
 	 2) ntm
+	 ;;
+	 3)
+        clear
+	    versaob
+	    #versao livro abreviação flag
+        buscar "$abv" 0 0 1
 	 ;;
 	 0) exit; echo
 	 ;;
@@ -437,19 +472,6 @@ elif [ "$2" == "l" ] || [ "$2" == "L" ]; then
 fi
 }
 
-function versaob() {
-        echo "
-        +----------------------------------------+
-        |     Escolha uma das versões            |
-        |                                        |
-        |  [1] Almeida Corrigida Fiel (ACF)      |
-        |  [2] Nova Versão Internacional (NVI)   |
-        |  [3] Sociedade Bíblica Critânica (SBC) |
-        |  [4] Versão Católica (VC)              |
-        +----------------------------------------+
-        "
-read -p "Digite o índice correspondente a versão bíblica: " vsb
-}
 
 #antigo testamento
     function atm() {
@@ -467,22 +489,22 @@ read -p "Digite o índice correspondente a versão bíblica: " vsb
       | [31]-Ob    [32] Jn   [33] Mq    [34] Na    [35] Hc    |
       | [36] Sf    [37] Ag   [38] Zc    [39] Ml               |
       +-------------------------------------------------------+"
-      read -p "Deseja baixar ou ler os livros (b/l)? " bl
+      read -p "      Deseja baixar ou ler os livros (b/l)? " bl
       echo
       
        if [ "$bl" == "b" ] || [ "$bl" == "B" ]; then
-      read -p "Você irá baixar um (1) ou vários livros (2)? " bv
+      read -p "      Você irá baixar um (1) ou vários livros (2)? " bv
     
         case $bv in
         1)
             versaob
-            read -p "Escolha o livro pelo índice (ex.: 23): " a
+            read -p "      Escolha o livro pelo índice (ex.: 23): " a
             vt "$a" "$bl" "$vsb"
             menu
         ;;
         2)
             versaob
-            read -p "Digite o intervalo a ser baixado (ex.1 39): " a b
+            read -p "      Digite o intervalo a ser baixado (ex.1 39): " a b
             for (( j="$a"; j<="$b"; j++ ))
             do
                 vt "$j" "$bl" "$vsb"
@@ -490,12 +512,12 @@ read -p "Digite o índice correspondente a versão bíblica: " vsb
             menu
         ;;
         *) 
-            echo "Opção inválida! Digite '0' ou '1'."
+            echo "      Opção inválida! Digite '0' ou '1'."
         ;;
         esac
       elif [ "$bl" == "l" ] || [ "$bl" == "L" ]; then
         versaob
-        read -p "Escolha o livro pelo índice (ex.: 23): " a
+        read -p "      Escolha o livro pelo índice (ex.: 23): " a
         vt "$a" "$bl" "$vsb"
         menu
       else
@@ -518,7 +540,7 @@ read -p "Digite o índice correspondente a versão bíblica: " vsb
       | [21] 1Pe   [22] 2Pe   [23] 1Jo  [24] 2Jo   [25] 3Jo   |
       | [26] Jd    [27] Ap                                    |
       +-------------------------------------------------------+"
-      read -p "Deseja baixar ou ler os livros (b/l)? " bl
+      read -p "      Deseja baixar ou ler os livros (b/l)? " bl
       
        if [ "$bl" == "b" ] || [ "$bl" == "B" ]; then
       read -p "Você irá baixar um (1) ou vários livros (2)? " bv
@@ -526,24 +548,24 @@ read -p "Digite o índice correspondente a versão bíblica: " vsb
         case $bv in
         1)
             versaob
-            read -p "Escolha o livro pelo índice (ex.: 23): " a
+            read -p "      Escolha o livro pelo índice (ex.: 23): " a
             nt "$a" "$bl" "$vsb"
         ;;
         2)
             versaob
-            read -p "Digite o intervalo a ser baixado (ex.1 27): " a b
+            read -p "      Digite o intervalo a ser baixado (ex.1 27): " a b
             for (( j="$a"; j<="$b"; j++ ))
             do
                 nt "$j" "$bl" "$vsb"
             done
         ;;
         *) 
-            echo "Opção inválida! Digite '0' ou '1'."
+            echo "      Opção inválida! Digite '0' ou '1'."
         ;;
         esac
       elif [ "$bl" == "l" ] || [ "$bl" == "L" ]; then
       versaob
-      read -p "Escolha o livro pelo índice (ex.: 23): " a
+      read -p "      Escolha o livro pelo índice (ex.: 23): " a
         nt "$a" "$bl" "$vsb"
       else
         ntm
@@ -571,7 +593,7 @@ clear
     
     jmp "$ini" 0
     echo "["
-    jmp "$ini" "$(($imax+3))"
+    jmp "$ini" "$(($imax+1))"
     echo "][  "$per2"%  ]"
     
     echo "Baixando o livro de $3..."
@@ -628,6 +650,8 @@ function key() {
 #construir livro
 
 function buildbook() {
+livro="$4"/"$3"/"$2"
+[[ -f "$livro" ]] && rm -f "$livro"
     for (( k=1; k<="$1"; k++ ))
     do
        progresso "$k" "$1" "$5"
@@ -649,7 +673,7 @@ linebook=$(wc -l "$book" | sed 's/[^0-9]//g') #numero de linhas do livro
 
 unset i
 i=1
-read -p "Quantas linhas você deseja ler por vez? " lpv
+read -p "      Quantas linhas você deseja ler por vez? " lpv
 while :
 do	clear
 	echo "
@@ -684,31 +708,108 @@ do	clear
 done
 }
 
+#Buscar palavra(s)
+function encontrar() {
+    unset book
+    #versão/at-nt/livro
+    [[ "$5" != "1" ]] && book="$3"/"$4" #Diretorio do livro
+    [[ "$5" = "1" ]] && book="$3"/"$4"/"$6" #Diretorio do livro
+    words=($1)
+    n1=0    #fixo
+    n2=$2   #fixo
+    flag1=0 #flag
+    cont1=0 #contador
+    i=0     #contador
+    while :
+    do
+        for (( j=$n1; j<=$n2; j++ ))
+        do
+            [[ "$j" == "$n2" ]] && { unset flag1; flag1=$i; }
+            [[ "$i" > "$n2" ]] && { unset i; i=0; }
+            keys[$j]=$(echo ${words[$i]}"*.*")
+            let i=$i+1
+        done
+
+		search="$(echo ${keys[@]} | sed 's/ //g; s/\*\.\**.$//g')"
+        grep --color=always -wrE "$search" "$book"
+
+        i=$flag1
+        [[ $cont1 -eq $n2 ]] && break
+        let cont1=$cont1+1
+    done
+}
+
+function buscar() {
+    clear
+    echo "
+    +----------------------------------------------------------------+
+    | A busca é 'case sensitive', ou seja, Deus é diferente de deus. |
+    +----------------------------------------------------------------+ 
+    | A seguinte entradas é válida: Deus terra Canaã                 |
+    | As três palavras serão permutadas e a busca será eficiente     |
+    |                                                                |
+    +----------------------------------------------------------------+
+    "
+    read -p "    Digite a(s) palavra(s) a ser(em) buscada(s): " keywords
+
+    palavras=($keywords)          #Vetor palavras
+    numpalavras=${#palavras[*]}  #Número de palavras
+    contador=$(($numpalavras-1)) #Fim do loop
+    
+    if [[ "$4" = "1" ]]; then
+        read -p "    Você deseja procurar no AT(1) ou NT(2) testamento? " resposta1
+        
+        case "$resposta1" in
+        1)
+          unset resposta1
+          resposta1="at"
+          #versao livro abreviação flag
+          encontrar "$keywords" $contador "$1" "$resposta1" 0 "$3"
+        ;;
+        2) 
+          unset resposta1
+          resposta1="nt"
+          #versao livro abreviação flag
+          encontrar "$keywords" $contador "$1" "$resposta1" 0 "$3"
+        ;;
+        *)
+          buscar "$1" "$2" "$3" "$4"
+        ;;
+        esac
+        
+    else
+        resposta1="$2"
+        #versao livro abreviação flag
+        encontrar "$keywords" $contador "$1" "$resposta1" 1 "$3"
+    fi
+
+}
+#Buscar palavra(s)
+
 function menuler(){
      clear
-     echo "
-             Livro de "$3"
-     +------------------------------+
-     |       MENU DE LEITURA        |
-     +------------------------------+
-     |                              |
-     | [1] Ler livro                |
-     | [2] Pesquisar palavra(s)     |
-     | [0] Voltar ao menu principal |
-     |                              |
-     +------------------------------+"
+    echo "
+            Livro de "$3"
+    +------------------------------+
+    |       MENU DE LEITURA        |
+    |                              |
+    | [1] Ler livro                |
+    | [2] Pesquisar palavra(s)     |
+    | [0] Voltar ao menu principal |
+    |                              |
+    +------------------------------+"
      
-     read -p "Digite a opção desejada: " opc
-     echo
+    read -p "    Digite a opção desejada: " opc
+    echo
      
      case "$opc" in
      1)
+        #abreviação livro livro-extenso versão
         lerlivro "$1" "$2" "$3" "$4"
      ;;
      2)
-        echo "Em construção..."
-        sleep 0.5
-        menu
+        #versao livro abreviação flag
+        buscar "$4" "$2" "$1" 0
      ;;
      0)
         menu
@@ -716,7 +817,8 @@ function menuler(){
      *)
         echo "Digite um índice válido!"
         sleep 0.5
-        menuler
+        #abreviação livro livro-extenso versão
+        menuler "$1" "$2" "$3" "$4"
      ;;
      esac
 }
