@@ -464,7 +464,7 @@ read -p "Digite o índice correspondente a versão bíblica: " vsb
       | [16] Ne    [17] Et   [18] Jó    [19] Sl    [20] Pv    |
       | [21] Ec    [22] Ct   [23] Is    [24] Jr    [25] Lm    |
       | [26] Ez    [27] Dn   [28] Os    [29] Jl    [30] Am    |
-      | [31]-Ob    [32] Jn   [33] Mq    [34] Na    [35] Hc    |
+      | [31] Ob    [32] Jn   [33] Mq    [34] Na    [35] Hc    |
       | [36] Sf    [37] Ag   [38] Zc    [39] Ml               |
       +-------------------------------------------------------+"
       read -p "Deseja baixar ou ler os livros (b/l)? " bl
