@@ -1,7 +1,7 @@
 #!/bin/bash
 #+-------------------------------------------------------+
 #|Program: Bíblia DW                                     |
-#|Version: 1.0.1                                         |
+#|Version: 1.0.2                                         |
 #|Autor: Francisco Iago Lira Passos                      |
 #|GitHub: https://github.com/iagolirapasssos/biblia-bash |
 #+-------------------------------------------------------+
@@ -22,10 +22,10 @@ function versaob() {
       |                                        |
       |  [1] Almeida Corrigida Fiel (ACF)      |
       |  [2] Nova Versão Internacional (NVI)   |
-      |  [3] Sociedade Bíblica Critânica (SBC) |
+      |  [3] Sociedade Bíblica Britânica (SBB) |
       |  [4] Versão Católica (VC)              |
       +----------------------------------------+"
-      read -p "      Digite o índice correspondente a versão bíblica: " vsb
+      read -p "      Digite o índice correspondente: " vsb
       unset abv
       case $vsb in
 	    1)
@@ -35,7 +35,7 @@ function versaob() {
 	      abv="nvi"
         ;;
         3)
-	      abv="sbc"
+	      abv="tb"
         ;;
         4)
 	      abv="vc"
@@ -56,7 +56,7 @@ function menu() {
 	| [0] Sair (Ctrl+C)              |
 	|                                |
 	+--------------------------------+"
-	read -p "	Escolha o VT(1) ou NT(2): " lv
+	read -p "	Escolha o índice correspondente: " lv
 	
 	case "$lv" in
 	 1) atm
@@ -295,10 +295,11 @@ esac
     ;;
     esac
     
-if [ "$2" == "b" ]; then
+if [ "$2" == "1" ]; then
     vtb="at"
     builddir "$imax" "$abv" "$vtb" "$livro" "$bb"
-elif [ "$2" == "l" ] || [ "$2" == "L" ]; then
+    menu
+elif [ "$2" == "2" ]; then
     vtb="at"
     menuler "$abv" "$vtb" "$livro" "$bb"
 fi
@@ -463,10 +464,11 @@ esac
     ;;
     esac
     
-if [ "$2" == "b" ]; then
+if [ "$2" == "1" ]; then
     ntb="nt"
     builddir "$imax" "$abv" "$ntb" "$livro" "$bb"
-elif [ "$2" == "l" ] || [ "$2" == "L" ]; then
+    menu
+elif [ "$2" == "2" ]; then
     ntb="nt"
     menuler "$abv" "$ntb" "$livro" "$bb"
 fi
@@ -489,10 +491,10 @@ fi
       | [31]-Ob    [32] Jn   [33] Mq    [34] Na    [35] Hc    |
       | [36] Sf    [37] Ag   [38] Zc    [39] Ml               |
       +-------------------------------------------------------+"
-      read -p "      Deseja baixar ou ler os livros (b/l)? " bl
+      read -p "      Deseja baixar(1) ou ler(2) os livros? " bl
       echo
       
-       if [ "$bl" == "b" ] || [ "$bl" == "B" ]; then
+       if [ "$bl" == "1" ]; then
       read -p "      Você irá baixar um (1) ou vários livros (2)? " bv
     
         case $bv in
@@ -515,7 +517,7 @@ fi
             echo "      Opção inválida! Digite '0' ou '1'."
         ;;
         esac
-      elif [ "$bl" == "l" ] || [ "$bl" == "L" ]; then
+      elif [ "$bl" == "2" ]; then
         versaob
         read -p "      Escolha o livro pelo índice (ex.: 23): " a
         vt "$a" "$bl" "$vsb"
@@ -540,9 +542,9 @@ fi
       | [21] 1Pe   [22] 2Pe   [23] 1Jo  [24] 2Jo   [25] 3Jo   |
       | [26] Jd    [27] Ap                                    |
       +-------------------------------------------------------+"
-      read -p "      Deseja baixar ou ler os livros (b/l)? " bl
+      read -p "      Deseja baixar(1) ou ler(2) os livros? " bl
       
-       if [ "$bl" == "b" ] || [ "$bl" == "B" ]; then
+       if [ "$bl" == "1" ]; then
       read -p "Você irá baixar um (1) ou vários livros (2)? " bv
     
         case $bv in
@@ -563,7 +565,7 @@ fi
             echo "      Opção inválida! Digite '0' ou '1'."
         ;;
         esac
-      elif [ "$bl" == "l" ] || [ "$bl" == "L" ]; then
+      elif [ "$bl" == "2" ]; then
       versaob
       read -p "      Escolha o livro pelo índice (ex.: 23): " a
         nt "$a" "$bl" "$vsb"
@@ -660,7 +662,7 @@ livro="$4"/"$3"/"$2"
        grep -oP '(?<=osisID=\\\").*(</verse>)' file |\
        sed 's/\<verse osisID=\\\"/\n/g; s/[/\><]//g; s/"/ /g; s/&quot;\|verse//g; s/—/-/g' |\
        sed '1d; s/\./@ /; s/.*@//g; s/.//' |\
-       sed -e "s/^/$2 /g; s/^[a-zA-Z]/\U&/g" >> "$4"/"$3"/"$2"
+       sed -e "s/^/$2 /g; s/^[a-zA-Z]/\U&/g" >> "$livro"
     done
     [[ -f file ]] && rm -f file
 }
@@ -673,7 +675,7 @@ linebook=$(wc -l "$book" | sed 's/[^0-9]//g') #numero de linhas do livro
 
 unset i
 i=1
-read -p "      Quantas linhas você deseja ler por vez? " lpv
+read -p "    Quantas linhas você deseja ler por vez? " lpv
 while :
 do	clear
 	echo "
@@ -688,17 +690,26 @@ do	clear
          +------------------------------+
          Linha "$i" de "$linebook""
     
-	grep -oP '(?<=[a-zA-Z] ).*(?=$)' "$book" | head -"$i" | tail -n "$lpv"
+    if [ `which fmt` ]; then
+        grep -oP '(?<=[a-zA-Z] ).*(?=$)' "$book" | head -"$i" |\
+        tail -n "$lpv" | sed 's/¶//; s/$/\n/' | fmt -w 90
+	elif [ `which fold` ]; then
+        grep -oP '(?<=[a-zA-Z] ).*(?=$)' "$book" | head -"$i" |\
+        tail -n "$lpv" | sed 's/¶//; s/$/\n/' | fold -s -w90
+    else
+        grep -oP '(?<=[a-zA-Z] ).*(?=$)' "$book" | head -"$i" |\
+        tail -n "$lpv" | sed 's/¶//; s/$/\n/' | fold -s -w90
+    fi
 	
 	key #chama a funcao key
 	
-	if [ "$keyud" == 2 ]; then
+	if [ "$keyud" = 2 ]; then
 		let i="$i"+1
-	elif [ "$keyud" == 1 ] && [ "$i" > 1 ]; then
+	elif [ "$keyud" = 1 ] && [ "$i" > 1 ]; then
 		 let i=$i-1
-	elif [ "$keyud" == 1 ] && [ "$i" == 1 ]; then
+	elif [ "$keyud" = 1 ] && [ "$i" = 1 ]; then
 		 i=1
-    elif [ "$keyud" == 0 ]; then
+    elif [ "$keyud" = 0 ]; then
          menuler "$1" "$2" "$3" "$4"
 	fi
         #Nao pode passar do maximo
@@ -708,18 +719,52 @@ do	clear
 done
 }
 
+function gerardados() {
+arquivo1="$4/$3-dados-pesquisa-$1.txt"
+    case "$3" in
+	    "acf")
+	      versao="Almeida Corrigida e Revista"
+        ;;
+        "nvi")
+	      versao="Nova Versão Internacional"
+        ;;
+        "tb")
+	      versao="Sociedade Bíblica Britânica"
+        ;;
+        "vc")
+	      versao="Versão Católica"
+        ;;
+        esac
+        echo "
+        =========== DADOS DA PESQUISA ===========
+
+        Palavras-chave:   $1
+        Ocorrências:      $2
+        Versão bíblica:   $versao
+        Data da pesquisa: `date`
+
+        =========================================
+        " > "$arquivo1"
+
+}
+
 #Buscar palavra(s)
 function encontrar() {
     unset book
+    dirpesq="pesquisa"
+    
     #versão/at-nt/livro
-    [[ "$5" != "1" ]] && book="$3"/"$4" #Diretorio do livro
-    [[ "$5" = "1" ]] && book="$3"/"$4"/"$6" #Diretorio do livro
+    [[ "$5" != "1" ]] && book="$3/$4"  #Diretorio do livro
+    [[ "$5" == "1" ]] && book="$3"/"$4"/"$6"      #Somente um livro
+    
     words=($1)
     n1=0    #fixo
     n2=$2   #fixo
     flag1=0 #flag
     cont1=0 #contador
+    cont2=0 #contador
     i=0     #contador
+    
     while :
     do
         for (( j=$n1; j<=$n2; j++ ))
@@ -729,14 +774,46 @@ function encontrar() {
             keys[$j]=$(echo ${words[$i]}"*.*")
             let i=$i+1
         done
+        
+        if [ `echo ${keys[@]} | wc -w` > 1 ]; then
+            search="$(echo ${keys[@]} | sed 's/ //g; s/\*\.\**.$//g')"
+            unformated="$(echo "$search" | sed 's/\*\.\*/; /')"
+        else
+            search="$(echo ${keys[@]} | sed 's/ //g')"
+            unformated="$search"
+        fi
+		
+		if [ `which fmt` ]; then 
+            [ -d pesquisa ] || mkdir pesquisa
+            grep --color=always -wrE "$search" "$book" | sed 's/¶//; s/$/\n/' |\
+            fmt -w 100 > pesquisa/"$unformated".txt
+            ocorrencias=$(bc -l <<< "`grep -wcrE "$search" "$book" |\
+            sed 's/.*://' | tr '\n' '+' | sed 's/+*.$//g'`")
+            let cont2=$cont2+$ocorrencias
+        else
+            [ -d pesquisa ] || mkdir pesquisa
+            #Irá pesquisa por 'search'
+            grep --color=always -wrE "$search" "$book" |\
+            sed 's/¶//; s/$/\n/' > pesquisa/"$unformated".txt
+            #Numero de ocorrencias
+            ocorrencias=$(bc -l <<< "`grep -wcrE "$search" "$book" |\
+            sed 's/.*://' | tr '\n' '+' | sed 's/+*.$//g'`")
+            #Quantidade total de ocorrencias
+            let cont2=$cont2+$ocorrencias
+        fi
+        echo $cont2
 
-		search="$(echo ${keys[@]} | sed 's/ //g; s/\*\.\**.$//g')"
-        grep --color=always -wrE "$search" "$book"
-
+        gerardados "$unformated" $cont2 "$3" "$dirpesq"
+        
         i=$flag1
-        [[ $cont1 -eq $n2 ]] && break
+        [[ $cont1 -le $n2 ]] && break
         let cont1=$cont1+1
     done
+    clear
+    #Mostra a resposta da pesquisa
+    cat pesquisa/"$unformated".txt
+    #Mostra os dados da pesquisa
+    cat "$arquivo1"
 }
 
 function buscar() {
@@ -756,7 +833,7 @@ function buscar() {
     numpalavras=${#palavras[*]}  #Número de palavras
     contador=$(($numpalavras-1)) #Fim do loop
     
-    if [[ "$4" = "1" ]]; then
+    if [[ "$4" == "1" ]]; then
         read -p "    Você deseja procurar no AT(1) ou NT(2) testamento? " resposta1
         
         case "$resposta1" in
